@@ -1,5 +1,6 @@
 package com.example.palys.datasender;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,20 +10,28 @@ import java.util.List;
  */
 public class DataHolder extends ArrayList<DataFrame> {
 
+    private final static int BOOL_LENGTH = 1;
+
     public int dataLength() {
         if (size() == 0) {
             return 0;
         }
 
-        return size() * get(0).dataLength();
+        return size() * get(0).dataLength() + BOOL_LENGTH;
     }
 
     public byte[] data() {
 
         byte[] bytes = new byte[dataLength()];
 
-        for (int i = 0; i < size(); i++) {
-            System.arraycopy(get(i).data(), 0, bytes, i * get(0).dataLength(), get(1).dataLength());
+        boolean gyroPresent = size() > 0 && get(0).isGyroscopeAvailable();
+
+        if (dataLength() > 0) {
+            bytes[0] = (byte) (gyroPresent ? 1 : 0);
+
+            for (int i = 0; i < size(); i++) {
+                System.arraycopy(get(i).data(), 0, bytes, i * get(0).dataLength() + BOOL_LENGTH, get(1).dataLength());
+            }
         }
 
         return bytes;
