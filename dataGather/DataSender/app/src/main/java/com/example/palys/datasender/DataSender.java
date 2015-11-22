@@ -68,7 +68,7 @@ public class DataSender extends ActionBarActivity {
     }
 
     private void doBindService() {
-        startService(new Intent(DataSender.this, IMUService.class));
+        //startService?
         bindService(new Intent(DataSender.this, IMUService.class), connection, Context.BIND_AUTO_CREATE);
     }
 
@@ -86,6 +86,7 @@ public class DataSender extends ActionBarActivity {
                 if (serviceActive) {
                     stopService(new Intent(DataSender.this, IMUService.class));
                     serviceActive = false;
+                    backgroundJobButton.setText("START BACKGROUND JOB");
                 } else {
                     doBindService();
                     if (imuService != null) {
