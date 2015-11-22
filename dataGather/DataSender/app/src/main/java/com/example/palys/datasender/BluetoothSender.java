@@ -8,4 +8,8 @@ public class BluetoothSender {
     public void send(byte[] message) {
         //TODO
     }
+
+    public void enterPin(String pin) {
+
+    }
 }

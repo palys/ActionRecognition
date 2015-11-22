@@ -30,7 +30,7 @@ public class DataHolder extends ArrayList<DataFrame> {
             bytes[0] = (byte) (gyroPresent ? 1 : 0);
 
             for (int i = 0; i < size(); i++) {
-                System.arraycopy(get(i).data(), 0, bytes, i * get(0).dataLength() + BOOL_LENGTH, get(1).dataLength());
+                System.arraycopy(get(i).data(), 0, bytes, i * get(0).dataLength() + BOOL_LENGTH, get(0).dataLength());
             }
         }
 
