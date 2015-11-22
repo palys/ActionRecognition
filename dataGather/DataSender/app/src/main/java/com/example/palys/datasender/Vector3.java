@@ -21,6 +21,10 @@ public class Vector3 {
         this.z = z;
     }
 
+    public Vector3(float[] values) {
+        this(values[0], values[1], values[2]);
+    }
+
     public float getX() {
         return x;
     }
