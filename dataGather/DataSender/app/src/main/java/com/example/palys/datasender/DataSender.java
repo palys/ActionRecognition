@@ -64,12 +64,11 @@ public class DataSender extends ActionBarActivity {
         backgroundJobButton = (Button) findViewById(R.id.jobControllButton);
         pinText = (EditText) findViewById(R.id.pinText);
 
-        doBindService();
-
         attachListeners();
     }
 
     private void doBindService() {
+        startService(new Intent(DataSender.this, IMUService.class));
         bindService(new Intent(DataSender.this, IMUService.class), connection, Context.BIND_AUTO_CREATE);
     }
 
@@ -85,12 +84,16 @@ public class DataSender extends ActionBarActivity {
             public void onClick(View v) {
 
                 if (serviceActive) {
-                    // TODO stop service
+                    stopService(new Intent(DataSender.this, IMUService.class));
+                    serviceActive = false;
                 } else {
+                    doBindService();
                     if (imuService != null) {
                         imuService.startGatheringData();
                         backgroundJobButton.setText("STOP BACKGROUND JOB");
                         serviceActive = true;
+                    } else {
+                        logToast("Service is not bound");
                     }
                 }
             }
