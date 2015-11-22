@@ -1,5 +1,10 @@
 package com.example.palys.datasender;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class DataSender extends ActionBarActivity {
@@ -21,6 +27,31 @@ public class DataSender extends ActionBarActivity {
 
     private BluetoothSender sender;
 
+    private IMUService imuService;
+
+    private boolean serviceActive = false;
+
+    private void logToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            imuService = ((IMUService.LocalBinder)service).getService();
+            imuService.setSender(sender);
+
+            logToast("Service connected");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            imuService = null;
+
+            logToast("Service disconnected");
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +64,13 @@ public class DataSender extends ActionBarActivity {
         backgroundJobButton = (Button) findViewById(R.id.jobControllButton);
         pinText = (EditText) findViewById(R.id.pinText);
 
+        doBindService();
+
         attachListeners();
+    }
+
+    private void doBindService() {
+        bindService(new Intent(DataSender.this, IMUService.class), connection, Context.BIND_AUTO_CREATE);
     }
 
     private void attachListeners() {
@@ -46,7 +83,16 @@ public class DataSender extends ActionBarActivity {
         backgroundJobButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+
+                if (serviceActive) {
+                    // TODO stop service
+                } else {
+                    if (imuService != null) {
+                        imuService.startGatheringData();
+                        backgroundJobButton.setText("STOP BACKGROUND JOB");
+                        serviceActive = true;
+                    }
+                }
             }
         });
     }
@@ -55,7 +101,7 @@ public class DataSender extends ActionBarActivity {
         testConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO
+                sender.send("TEST".getBytes());
             }
         });
     }
