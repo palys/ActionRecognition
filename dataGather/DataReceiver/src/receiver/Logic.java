@@ -1,5 +1,10 @@
 package receiver;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
  * Created by Palys on 2015-11-25.
  */
@@ -13,12 +18,22 @@ public class Logic {
 
     private static final String END_MESSAGE = "end";
 
+    private File currentDirectory = new File(".");
+
+    private String fileNamePrefix = "file";
+
+    private int counter = 0;
+
     public void setSender(BluetoothSender sender) {
         this.sender = sender;
     }
 
     public String getPin() {
         return sender.getPin();
+    }
+
+    public void setCurrentDirectory(File newDirectory) {
+        this.currentDirectory = newDirectory;
     }
 
     public void onMessage(byte[] message) {
@@ -36,8 +51,19 @@ public class Logic {
         }
     }
 
+    private void saveFile(String name, byte[] bytes) throws IOException {
+        FileOutputStream fout = new FileOutputStream(name);
+        fout.write(bytes);
+        fout.close();
+    }
+
     private void dataMessage(byte[] message) {
-        //TODO save file
+
+        try {
+            saveFile(fileNamePrefix + (counter++), message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void start() {
