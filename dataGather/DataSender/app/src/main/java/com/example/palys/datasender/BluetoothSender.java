@@ -5,11 +5,21 @@ package com.example.palys.datasender;
  */
 public class BluetoothSender {
 
+    private DataSender dataSender;
+
+    public BluetoothSender(DataSender dataSender) {
+        this.dataSender = dataSender;
+    }
+
     public void send(byte[] message) {
         //TODO
     }
 
     public void enterPin(String pin) {
 
+    }
+
+    private void receive() {
+        //dataSender.onMessage(message);
     }
 }

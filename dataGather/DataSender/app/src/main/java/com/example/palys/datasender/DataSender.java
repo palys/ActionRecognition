@@ -31,6 +31,34 @@ public class DataSender extends ActionBarActivity {
 
     private boolean serviceActive = false;
 
+    private void onTestReceived() {
+        logToast("Test ok");
+    }
+
+    private void onStartReceived() {
+        if (imuService != null) {
+            imuService.startGatheringData();
+        }
+    }
+
+    private void onStopReceived() {
+        if (imuService != null) {
+            imuService.stopGatheringDataAndSend();
+        }
+    }
+
+    public void onMessage(byte[] message) {
+        String msg = new String(message);
+
+        if ("test".equals(msg)) {
+            onTestReceived();
+        } else if("start".equals(msg)) {
+            onStartReceived();
+        } else if ("end".equals(msg)) {
+            onStopReceived();
+        }
+    }
+
     private void logToast(String message) {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
@@ -57,7 +85,7 @@ public class DataSender extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_sender);
 
-        sender = new BluetoothSender();
+        sender = new BluetoothSender(this);
 
         enterPinButton = (Button) findViewById(R.id.enterPinButton);
         testConnectionButton = (Button) findViewById(R.id.testConnectionButton);
@@ -85,14 +113,12 @@ public class DataSender extends ActionBarActivity {
 
                 if (serviceActive) {
                     stopService(new Intent(DataSender.this, IMUService.class));
-                    serviceActive = false;
                     backgroundJobButton.setText("START BACKGROUND JOB");
                 } else {
                     doBindService();
                     if (imuService != null) {
                         imuService.startGatheringData();
                         backgroundJobButton.setText("STOP BACKGROUND JOB");
-                        serviceActive = true;
                     } else {
                         logToast("Service is not bound");
                     }
