@@ -11,7 +11,8 @@ public class Main {
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                GUI gui = new GUI();
+                Logic logic = new Logic();
+                GUI gui = new GUI(logic);
                 gui.setVisible(true);
             }
         });
