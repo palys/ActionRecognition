@@ -26,6 +26,16 @@ public class GUI extends JFrame implements ActionListener {
 
     private JFileChooser chooser;
 
+    private final static String FILE_CHOOSE_ACTION = "FileChoose";
+
+    private final static String START_END_ACTION = "StartEnd";
+
+    private final static String START_BUTTON_LABEL = "START";
+
+    private final static String END_BUTTON_LABEL = "END";
+
+    private boolean running = false;
+
     public GUI(Logic logic) {
         this.logic = logic;
         initUI();
@@ -39,7 +49,11 @@ public class GUI extends JFrame implements ActionListener {
         setLayout(new GridLayout(4, 1));
 
         chooseDirectoryButton = new JButton("Choose directory");
-        startStopGatheringDataButton = new JButton("START");
+        chooseDirectoryButton.setActionCommand(FILE_CHOOSE_ACTION);
+
+        startStopGatheringDataButton = new JButton(START_BUTTON_LABEL);
+        startStopGatheringDataButton.setActionCommand(START_END_ACTION);
+
         currentDirectoryLabel = new JLabel();
         pinLabel  = new JLabel();
 
@@ -57,6 +71,7 @@ public class GUI extends JFrame implements ActionListener {
         add(pinLabel);
 
         chooseDirectoryButton.addActionListener(this);
+        startStopGatheringDataButton.addActionListener(this);
         pinLabel.setText("PIN: " + logic.getPin());
 
     }
@@ -64,14 +79,27 @@ public class GUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        chooser = new JFileChooser();
-        chooser.setCurrentDirectory(currentDirectory);
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        chooser.setAcceptAllFileFilterUsed(false);
+        if (FILE_CHOOSE_ACTION.equals(e.getActionCommand())) {
 
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            currentDirectory = chooser.getSelectedFile();
-            currentDirectoryLabel.setText(currentDirectory.toString());
+            chooser = new JFileChooser();
+            chooser.setCurrentDirectory(currentDirectory);
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setAcceptAllFileFilterUsed(false);
+
+            if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                currentDirectory = chooser.getSelectedFile();
+                currentDirectoryLabel.setText(currentDirectory.toString());
+            }
+        } else if (START_END_ACTION.equals(e.getActionCommand())) {
+            if (running) {
+                logic.end();
+                running = false;
+                startStopGatheringDataButton.setText(START_BUTTON_LABEL);
+            } else {
+                logic.start();
+                running = true;
+                startStopGatheringDataButton.setText(END_BUTTON_LABEL);
+            }
         }
 
     }

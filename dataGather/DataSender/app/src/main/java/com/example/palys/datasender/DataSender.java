@@ -131,7 +131,7 @@ public class DataSender extends ActionBarActivity {
         testConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sender.send("TEST".getBytes());
+                sender.send("test".getBytes());
             }
         });
     }
