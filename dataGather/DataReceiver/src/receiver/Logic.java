@@ -36,6 +36,10 @@ public class Logic {
         this.currentDirectory = newDirectory;
     }
 
+    public void setFilePrefix(String filePrefix) {
+        this.fileNamePrefix = filePrefix;
+    }
+
     public void onMessage(byte[] message) {
         if (message.length < 6) {
             String msgString = new String(message);

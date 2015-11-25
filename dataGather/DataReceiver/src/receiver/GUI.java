@@ -26,9 +26,13 @@ public class GUI extends JFrame implements ActionListener {
 
     private JFileChooser chooser;
 
+    private JTextField filePrefixText;
+
     private final static String FILE_CHOOSE_ACTION = "FileChoose";
 
     private final static String START_END_ACTION = "StartEnd";
+
+    private final static String FILE_PREFIX_CHANGED_ACTION = "PrefixChanged";
 
     private final static String START_BUTTON_LABEL = "START";
 
@@ -46,7 +50,7 @@ public class GUI extends JFrame implements ActionListener {
         setSize(600, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        setLayout(new GridLayout(4, 1));
+        setLayout(new GridLayout(5, 1));
 
         chooseDirectoryButton = new JButton("Choose directory");
         chooseDirectoryButton.setActionCommand(FILE_CHOOSE_ACTION);
@@ -56,6 +60,10 @@ public class GUI extends JFrame implements ActionListener {
 
         currentDirectoryLabel = new JLabel();
         pinLabel  = new JLabel();
+
+        filePrefixText = new JTextField();
+        filePrefixText.setActionCommand(FILE_PREFIX_CHANGED_ACTION);
+        filePrefixText.setText("file");
 
         try {
             String path = currentDirectory.getCanonicalPath().toString();
@@ -67,11 +75,13 @@ public class GUI extends JFrame implements ActionListener {
 
         add(currentDirectoryLabel);
         add(chooseDirectoryButton);
+        add(filePrefixText);
         add(startStopGatheringDataButton);
         add(pinLabel);
 
         chooseDirectoryButton.addActionListener(this);
         startStopGatheringDataButton.addActionListener(this);
+        filePrefixText.addActionListener(this);
         pinLabel.setText("PIN: " + logic.getPin());
 
     }
@@ -89,6 +99,7 @@ public class GUI extends JFrame implements ActionListener {
             if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 currentDirectory = chooser.getSelectedFile();
                 currentDirectoryLabel.setText(currentDirectory.toString());
+                logic.setCurrentDirectory(currentDirectory);
             }
         } else if (START_END_ACTION.equals(e.getActionCommand())) {
             if (running) {
@@ -100,6 +111,9 @@ public class GUI extends JFrame implements ActionListener {
                 running = true;
                 startStopGatheringDataButton.setText(END_BUTTON_LABEL);
             }
+        } else if (FILE_PREFIX_CHANGED_ACTION.equals(e.getActionCommand())) {
+            String newPrefix = filePrefixText.getText();
+            logic.setFilePrefix(newPrefix);
         }
 
     }
