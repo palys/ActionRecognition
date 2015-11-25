@@ -22,6 +22,8 @@ public class GUI extends JFrame implements ActionListener {
 
     private File currentDirectory = new File(".");
 
+    private JLabel pinLabel;
+
     private JFileChooser chooser;
 
     public GUI(Logic logic) {
@@ -34,11 +36,12 @@ public class GUI extends JFrame implements ActionListener {
         setSize(600, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        setLayout(new GridLayout(3, 1));
+        setLayout(new GridLayout(4, 1));
 
         chooseDirectoryButton = new JButton("Choose directory");
         startStopGatheringDataButton = new JButton("START");
         currentDirectoryLabel = new JLabel();
+        pinLabel  = new JLabel();
 
         try {
             String path = currentDirectory.getCanonicalPath().toString();
@@ -51,8 +54,10 @@ public class GUI extends JFrame implements ActionListener {
         add(currentDirectoryLabel);
         add(chooseDirectoryButton);
         add(startStopGatheringDataButton);
+        add(pinLabel);
 
         chooseDirectoryButton.addActionListener(this);
+        pinLabel.setText("PIN: " + logic.getPin());
 
     }
 

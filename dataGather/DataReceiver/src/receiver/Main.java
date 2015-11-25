@@ -12,6 +12,8 @@ public class Main {
             @Override
             public void run() {
                 Logic logic = new Logic();
+                BluetoothSender sender = new BluetoothSender(logic);
+                logic.setSender(sender);
                 GUI gui = new GUI(logic);
                 gui.setVisible(true);
             }
